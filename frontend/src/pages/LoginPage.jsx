@@ -16,7 +16,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login', // ✅ local
+        'https://foodtue.onrender.com/api/auth/login', // ✅ local
         { email, password },
         { withCredentials: true } // send cookies
       );

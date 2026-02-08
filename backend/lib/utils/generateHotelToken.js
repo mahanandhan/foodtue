@@ -9,8 +9,8 @@ export const generateHotelTokenAndSetCookie = (email, res) => {
 
   res.cookie('hotelJwt', token, {
     httpOnly: true,
-    secure: false,      // set true in production (HTTPS)
-    sameSite: 'lax',
+    secure: true,      // set true in production (HTTPS)
+    sameSite: 'none',
     maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
   });
 };

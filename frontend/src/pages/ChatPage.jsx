@@ -25,7 +25,7 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/me', { withCredentials: true });
+        const res = await axios.get('https://foodtue.onrender.com/api/auth/me', { withCredentials: true });
         setUsername(res.data.username);
       } catch (err) {
         console.error('Error fetching user:', err);
@@ -51,7 +51,7 @@ const ChatPage = () => {
 
   const fetchHotels = async (searchText = '') => {
     try {
-      const res = await axios.get('http://localhost:5000/api/hotels/gethotel', {
+      const res = await axios.get('https://foodtue.onrender.com/api/hotels/gethotel', {
         params: { search: searchText },
         withCredentials: true
       });
@@ -100,7 +100,7 @@ const ChatPage = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout', {}, { withCredentials: true });
+      await axios.post('https://foodtue.onrender.com/api/auth/logout', {}, { withCredentials: true });
       console.log(`User "${username}" logged out successfully.`);
       navigate('/login');
     } catch (err) {

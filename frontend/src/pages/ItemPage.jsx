@@ -28,7 +28,7 @@ const ItemPage = () => {
     const fetchHotel = async () => {
       if (!state?.hotel) {
         const res = await axios.get(
-          'http://localhost:5000/api/hotels/gethotel',
+          'https://foodtue.onrender.com/api/hotels/gethotel',
           { params: { id }, withCredentials: true }
         );
         setHotelData(res.data[0]);
@@ -37,7 +37,7 @@ const ItemPage = () => {
 
     const fetchDishes = async () => {
       const res = await axios.get(
-        `http://localhost:5000/api/hotels/${id}/dishes`,
+        `https://foodtue.onrender.com/api/hotels/${id}/dishes`,
         { withCredentials: true }
       );
       setDishes(res.data);
@@ -45,7 +45,7 @@ const ItemPage = () => {
 
     const fetchCart = async () => {
       const res = await axios.get(
-        'http://localhost:5000/api/cart/getcart',
+        'https://foodtue.onrender.com/api/cart/getcart',
         { withCredentials: true }
       );
 
@@ -65,7 +65,7 @@ const ItemPage = () => {
   const addToCart = async (dishId) => {
     try {
       await axios.post(
-        'http://localhost:5000/api/cart/addtocart',
+        'https://foodtue.onrender.com/api/cart/addtocart',
         {
           hotelId: hotelData._id,
           dishId,

@@ -19,7 +19,7 @@ const SignupPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/signup', // your backend signup endpoint
+        'https://foodtue.onrender.com/api/auth/signup', // your backend signup endpoint
         {
           username: formData.fullName,
           email: formData.email,

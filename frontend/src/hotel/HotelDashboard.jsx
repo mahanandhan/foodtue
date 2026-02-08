@@ -11,7 +11,7 @@ const HotelDashboard = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/hotelorders/orders', { withCredentials: true });
+        const res = await axios.get('https://foodtue.onrender.com/api/hotelorders/orders', { withCredentials: true });
 
         const formattedOrders = res.data.map(order => ({
           id: order._id,

@@ -15,6 +15,8 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'https://foodtue.onrender.com',
+    'https://foodtue.vercel.app'
   ],
   credentials: true // allow cookies to be sent
 }));
