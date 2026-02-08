@@ -13,8 +13,12 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:5173', // frontend origin
-  credentials: true // allow cookies
+  origin: [
+    'http://localhost:5173',          // local dev
+    'https://foodtue.vercel.app',
+    'https://foodtue.onrender.com/'     // production frontend
+  ],
+  credentials: true // allow cookies to be sent
 }));
 app.get('/', (req, res) => {
   res.send('Hello, Foodtue!');

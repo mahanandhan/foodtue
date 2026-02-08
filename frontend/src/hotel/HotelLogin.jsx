@@ -32,7 +32,7 @@ const HotelLogin = () => {
       };
 
       const res = await axios.post(
-        'http://localhost:5000/api/hotels/login',
+        'https://foodtue.onrender.com/api/hotels/login',
         payload,
         { withCredentials: true } // necessary if backend sets auth cookie
       );

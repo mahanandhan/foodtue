@@ -24,7 +24,7 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/me', { withCredentials: true });
+        const res = await axios.get('https://foodtue.onrender.com/api/auth/me', { withCredentials: true });
         setUser(res.data);
       } catch (err) {
         console.error(err);
@@ -52,7 +52,7 @@ const ChatPage = () => {
   // Fetch hotels dynamically
   const fetchHotels = async (searchText = '') => {
     try {
-      const res = await axios.get('http://localhost:5000/api/hotels/gethotel', {
+      const res = await axios.get('https://foodtue.onrender.com/api/hotels/gethotel', {
         params: { search: searchText },
         withCredentials: true
       });
