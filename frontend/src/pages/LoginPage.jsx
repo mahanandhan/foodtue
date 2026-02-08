@@ -1,61 +1,49 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Github, Chrome } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); // For error messages
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Reset error before submission
+    setError('');
 
     try {
       const response = await axios.post(
-        'https://foodtue.onrender.com/api/auth/login',
+        'http://localhost:5000/api/auth/login', // ✅ local
         { email, password },
-        {
-          withCredentials: true, // Important: sends cookies
-        }
+        { withCredentials: true } // send cookies
       );
 
       console.log('Login success:', response.data);
-
-      // Redirect user after login
-      navigate('/chat'); // Change this to your home page route
+      navigate('/chat'); // redirect to chat
     } catch (err) {
       console.error('Login error:', err);
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Something went wrong. Please try again.');
-      }
+      if (err.response?.data?.message) setError(err.response.data.message);
+      else setError('Something went wrong. Please try again.');
     }
   };
 
   return (
     <div className="min-h-screen w-full bg-[#FDFDFD] flex items-center justify-center p-4 font-sans text-gray-900">
-      {/* Background decorative elements */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-[#12A0B1]/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-[#12A0B1]/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="w-full max-w-md bg-white rounded-[32px] shadow-2xl shadow-gray-200/50 border border-gray-50 p-8 md:p-12 z-10 animate-in fade-in zoom-in duration-500">
-        {/* Logo and Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex w-14 h-14 bg-[#12A0B1] rounded-2xl items-center justify-center text-white font-bold text-2xl transform rotate-6 shadow-lg shadow-[#12A0B1]/20 mb-6">
-            F
-          </div>
+          <div className="inline-flex w-14 h-14 bg-[#12A0B1] rounded-2xl items-center justify-center text-white font-bold text-2xl transform rotate-6 shadow-lg shadow-[#12A0B1]/20 mb-6">F</div>
           <h1 className="text-3xl font-black tracking-tight text-gray-800 mb-2">Welcome Back</h1>
           <p className="text-gray-400 font-medium">Please enter your details to sign in</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
@@ -112,13 +100,11 @@ const LoginPage = () => {
           </button>
         </form>
 
-        {/* Divider */}
         <div className="relative my-10 text-center">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
           <span className="relative bg-white px-4 text-xs font-bold text-gray-300 uppercase tracking-widest">Or continue with</span>
         </div>
 
-        {/* Social Logins */}
         <div className="grid grid-cols-2 gap-4">
           <button className="flex items-center justify-center gap-2 py-3.5 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all font-bold text-sm text-gray-600">
             <Chrome size={18} /> Google
@@ -128,7 +114,6 @@ const LoginPage = () => {
           </button>
         </div>
 
-        {/* Footer Link */}
         <p className="mt-10 text-center text-sm text-gray-400 font-medium">
           Don't have an account? {' '}
           <button onClick={() => navigate('/signup')} className="text-[#12A0B1] font-bold hover:underline underline-offset-4">Create account</button>

@@ -25,7 +25,7 @@ const CartPage = () => {
   const fetchCart = async () => {
     try {
       const res = await axios.get(
-        'https://foodtue.onrender.com/api/cart/getcart',
+        'http://localhost:5000/api/cart/getcart',
         { withCredentials: true }
       );
 
@@ -56,8 +56,8 @@ const CartPage = () => {
 
     const api =
       delta > 0
-        ? 'https://foodtue.onrender.com/api/cart/increment'
-        : 'https://foodtue.onrender.com/api/cart/decrement';
+        ? 'http://localhost:5000/api/cart/increment'
+        : 'http://localhost:5000/api/cart/decrement';
 
     try {
       await axios.post(
@@ -76,7 +76,7 @@ const CartPage = () => {
   const placeOrder = async () => {
     try {
       await axios.post(
-        'https://foodtue.onrender.com/api/orders/placeorder',
+        'http://localhost:5000/api/orders/placeorder',
         {},
         { withCredentials: true }
       );

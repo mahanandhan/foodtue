@@ -25,7 +25,7 @@ const OrderPage = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        "https://foodtue.onrender.com/api/orders/myorders",
+        "http://localhost:5000/api/orders/myorders",
         { withCredentials: true }
       );
 

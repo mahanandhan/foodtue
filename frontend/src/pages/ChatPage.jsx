@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
-  ShoppingBag, MapPin, ChevronRight, Utensils, Pizza, Soup, Leaf, Send, Mic, Star, ArrowLeft, Plus, Minus, 
-  User,
+  ShoppingBag, MapPin, ChevronRight, Utensils, Pizza, Soup, Leaf, Send, Mic, Star, ArrowLeft, 
   ListOrdered
 } from 'lucide-react';
 
@@ -19,21 +18,21 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [user, setUser] = useState(null);
   const [cart, setCart] = useState({});
+  const [username, setUsername] = useState("");
 
-  // Fetch logged-in user
+  // Fetch current user
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get('https://foodtue.onrender.com/api/auth/me', { withCredentials: true });
-        setUser(res.data);
+        const res = await axios.get('http://localhost:5000/api/auth/me', { withCredentials: true });
+        setUsername(res.data.username);
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching user:', err);
       }
     };
     fetchUser();
-  }, [navigate]);
+  }, []);
 
   // Initial bot greeting
   useEffect(() => {
@@ -50,10 +49,9 @@ const ChatPage = () => {
     }
   }, []);
 
-  // Fetch hotels dynamically
   const fetchHotels = async (searchText = '') => {
     try {
-      const res = await axios.get('https://foodtue.onrender.com/api/hotels/gethotel', {
+      const res = await axios.get('http://localhost:5000/api/hotels/gethotel', {
         params: { search: searchText },
         withCredentials: true
       });
@@ -64,7 +62,6 @@ const ChatPage = () => {
     }
   };
 
-  // Send user message
   const handleSend = async (textOverride = null) => {
     const textToSend = textOverride || inputValue;
     if (!textToSend.trim()) return;
@@ -75,25 +72,19 @@ const ChatPage = () => {
 
     setTimeout(async () => {
       const hotels = await fetchHotels(textToSend);
-
       const botResponse = {
         id: Date.now() + 1,
         type: 'bot',
         text: hotels.length ? "I found these hotels for you in Nellore:" : "Sorry, no hotels found.",
-        hotels: hotels
+        hotels
       };
-
       setMessages(prev => [...prev, botResponse]);
       setIsTyping(false);
     }, 1200);
   };
 
-  // Redirect to ItemPage
-  const handleOrderNow = (hotel) => {
-    navigate(`/items/${hotel._id}`, { state: { hotel } });
-  };
+  const handleOrderNow = (hotel) => navigate(`/items/${hotel._id}`, { state: { hotel } });
 
-  // Cart update functions
   const updateCart = (itemId, delta) => {
     setCart(prev => {
       const newQty = (prev[itemId] || 0) + delta;
@@ -105,8 +96,17 @@ const ChatPage = () => {
     });
   };
 
-  // Compute cart totals
   const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/auth/logout', {}, { withCredentials: true });
+      console.log(`User "${username}" logged out successfully.`);
+      navigate('/login');
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] max-w-2xl mx-auto border-x border-gray-50 flex flex-col">
@@ -118,21 +118,23 @@ const ChatPage = () => {
           </button>
           <div>
             <h1 className="text-lg font-black leading-tight text-gray-800">Foodtue AI</h1>
-            <div className="flex items-center gap-1 text-[10px] text-[#12A0B1] font-bold uppercase tracking-widest">
+            <div className="flex items-center gap-1 text-[12px] text-[#12A0B1] font-bold uppercase tracking-widest">
               <MapPin size={10} /> Nellore Delivery
             </div>
+            {username && <p className="text-sm text-gray-500 mt-1">Logged in as <span className="font-bold text-gray-800">{username}</span></p>}
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          {user && <span className="text-gray-800 font-bold">{user.username}</span>}
           <button onClick={() => navigate('/cart')} className="p-2.5 bg-gray-50 rounded-2xl text-gray-600 relative">
             <ShoppingBag size={20} />
             {totalItems > 0 && <span className="absolute top-2 right-2 w-3 h-3 bg-[#12A0B1] rounded-full border-2 border-white"></span>}
           </button>
-
           <button onClick={() => navigate('/orders')} className="p-2.5 bg-gray-50 rounded-2xl text-gray-600">
             <ListOrdered size={20} />
+          </button>
+          <button onClick={handleLogout} className="text-sm text-red-500 font-bold px-3 py-1 rounded-lg hover:bg-red-50 transition-all">
+            Logout
           </button>
         </div>
       </header>
@@ -142,9 +144,7 @@ const ChatPage = () => {
         {messages.map(msg => (
           <div key={msg.id} className="space-y-4">
             <div className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-              <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm ${
-                msg.type === 'user' ? 'bg-[#12A0B1] text-white rounded-tr-none font-medium' : 'bg-white text-gray-700 rounded-tl-none border border-gray-100'
-              }`}>
+              <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm ${msg.type === 'user' ? 'bg-[#12A0B1] text-white rounded-tr-none font-medium' : 'bg-white text-gray-700 rounded-tl-none border border-gray-100'}`}>
                 {msg.text}
               </div>
             </div>
@@ -165,10 +165,7 @@ const ChatPage = () => {
                         </div>
                         {hotel.rating && <div className="flex items-center gap-1 text-green-600 font-bold text-sm bg-green-50 px-2 py-1 rounded-lg">{hotel.rating} <Star size={14} fill="currentColor" /></div>}
                       </div>
-                      <button 
-                        onClick={() => handleOrderNow(hotel)}
-                        className="w-full mt-4 bg-[#12A0B1] text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"
-                      >
+                      <button onClick={() => handleOrderNow(hotel)} className="w-full mt-4 bg-[#12A0B1] text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
                         Order Now <ChevronRight size={18} />
                       </button>
                     </div>
@@ -182,11 +179,7 @@ const ChatPage = () => {
         {!isTyping && messages.length === 2 && (
           <div className="grid grid-cols-2 gap-3 mt-4 animate-in fade-in zoom-in-95 duration-500">
             {CATEGORIES.map(cat => (
-              <button 
-                key={cat.name} 
-                onClick={() => handleSend(cat.name)}
-                className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#12A0B1] transition-all shadow-sm active:scale-95 text-left"
-              >
+              <button key={cat.name} onClick={() => handleSend(cat.name)} className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#12A0B1] transition-all shadow-sm active:scale-95 text-left">
                 <div className={`${cat.color} p-2 rounded-xl shrink-0`}>{cat.icon}</div>
                 <span className="font-bold text-gray-700 text-sm">{cat.name}</span>
               </button>
@@ -199,19 +192,15 @@ const ChatPage = () => {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white/95 to-transparent z-40">
         <div className="max-w-2xl mx-auto flex items-center gap-3 bg-gray-50 rounded-[24px] px-4 py-2 border border-gray-100 focus-within:bg-white focus-within:border-[#12A0B1] transition-all shadow-lg">
           <button className="text-gray-400 hover:text-[#12A0B1] transition-colors"><Mic size={20} /></button>
-          <input 
-            type="text" 
-            value={inputValue} 
-            onChange={e => setInputValue(e.target.value)} 
-            onKeyPress={e => e.key === 'Enter' && handleSend()} 
-            placeholder="Ask for food..." 
-            className="bg-transparent border-none focus:ring-0 flex-1 py-3 text-[15px] outline-none text-gray-700 placeholder:text-gray-400" 
+          <input
+            type="text"
+            value={inputValue}
+            onChange={e => setInputValue(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' && handleSend()}
+            placeholder="Ask for food..."
+            className="bg-transparent border-none focus:ring-0 flex-1 py-3 text-[15px] outline-none text-gray-700 placeholder:text-gray-400"
           />
-          <button 
-            onClick={() => handleSend()} 
-            disabled={!inputValue.trim()}
-            className={`p-3 rounded-2xl transition-all ${inputValue.trim() ? 'bg-[#12A0B1] text-white shadow-lg' : 'bg-gray-200 text-white'}`}
-          >
+          <button onClick={() => handleSend()} disabled={!inputValue.trim()} className={`p-3 rounded-2xl transition-all ${inputValue.trim() ? 'bg-[#12A0B1] text-white shadow-lg' : 'bg-gray-200 text-white'}`}>
             <Send size={18} />
           </button>
         </div>
