@@ -30,7 +30,6 @@ const ChatPage = () => {
         setUser(res.data);
       } catch (err) {
         console.error(err);
-        navigate('/login');
       }
     };
     fetchUser();
