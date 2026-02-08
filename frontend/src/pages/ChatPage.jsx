@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
-  ShoppingBag, MapPin, ChevronRight, Utensils, Pizza, Soup, Leaf, Send, Mic, Star, ArrowLeft, Plus, Minus 
+  ShoppingBag, MapPin, ChevronRight, Utensils, Pizza, Soup, Leaf, Send, Mic, Star, ArrowLeft, Plus, Minus, 
+  User,
+  ListOrdered
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -125,9 +127,13 @@ const ChatPage = () => {
 
         <div className="flex items-center gap-4">
           {user && <span className="text-gray-800 font-bold">{user.username}</span>}
-          <button className="p-2.5 bg-gray-50 rounded-2xl text-gray-600 relative">
+          <button onClick={() => navigate('/cart')} className="p-2.5 bg-gray-50 rounded-2xl text-gray-600 relative">
             <ShoppingBag size={20} />
             {totalItems > 0 && <span className="absolute top-2 right-2 w-3 h-3 bg-[#12A0B1] rounded-full border-2 border-white"></span>}
+          </button>
+
+          <button onClick={() => navigate('/orders')} className="p-2.5 bg-gray-50 rounded-2xl text-gray-600">
+            <ListOrdered size={20} />
           </button>
         </div>
       </header>
